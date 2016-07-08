@@ -8,8 +8,10 @@ import {
   Text
 } from 'react-native';
 
-import PortableView from './PortableGirdDemo.js';
-import Test from './Test';
+import PortableView from './Test';
+
+let SECTIONS = [{color: 'red'}, {color: 'green'}, {color: 'blue'}, {color: 'black'}, {color: 'yellow'}];
+
 
 export default class Demo extends Component {
 
@@ -20,9 +22,24 @@ export default class Demo extends Component {
     };
   }
 
+  renderContent(obj,i) {
+    return (
+      <View
+        style={{marginLeft:20,marginTop:20,width:100,height:100,backgroundColor:obj.color}}
+
+      >
+        <Text> {obj.color} + {i} </Text>
+      </View>
+    )
+  }
+
   render () {
     return (
-      <Test/>
+      <PortableView
+        style={{flex:1,width:300,flexWrap:'wrap',justifyContent:'center',alignItems:'center',flexDirection:'row'}}
+        data = {SECTIONS}
+        renderContent = {this.renderContent.bind(this)}
+      />
     )
   }
 

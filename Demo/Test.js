@@ -1,29 +1,29 @@
 import React, {Component} from 'react';
-import {View, Text, PanResponder, Animated,LayoutAnimation} from 'react-native';
+import {View, Text, PanResponder, Animated, LayoutAnimation} from 'react-native';
 
-let SECTIONS = [{color: 'red'}, {color: 'green'}, {color: 'blue'}, {color: 'black'}, {color: 'yellow'}];
-
-export default class Demo extends Component {
+export default class PortableView extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      data: SECTIONS,
+      data: props.data,
       pan: new Animated.ValueXY({x: 0, y: 0}),
       translateX1: new Animated.Value(0),
       isChangePosition: false,
+      isMoving: false,
       currentPanIndex: 0
     },
       this.positions = [],
       this.animations = {
-        duration: 200,
+        duration: 300,
         create: {
           type: LayoutAnimation.Types.linear,
         },
         update: {
-          type: LayoutAnimation.Types.easeInEaseOut,
-        }
-      }
+          type: LayoutAnimation.Types.linear,
+          springDamping: 0.7,
+        },
+      };
   }
 
   componentWillMount() {
@@ -35,10 +35,6 @@ export default class Demo extends Component {
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
       onPanResponderGrant: (evt, gestureState) => {
-        // 开始手势操作。给用户一些视觉反馈，让他们知道发生了什么事情！
-
-        // gestureState.{x,y}0 现在会被设置为0
-        console.log('正在点击');
         this.state.pan.setOffset({x: this.state.pan.x._value, y: this.state.pan.y._value});
         this.state.pan.setValue({x: 0, y: 0})
 
@@ -61,55 +57,39 @@ export default class Demo extends Component {
 
         this.state.pan.x.setValue(gestureState.dx);
         this.state.pan.y.setValue(gestureState.dy);
-        // console.log('x0' + '=' + x0);
-        // console.log('y0' + '=' + y0);
-        // console.log('dx' + '=' + dx);
-        // console.log('dy' + '=' + dy);
 
-        // let position = this.positions[this.state.currentPanIndex];
-        // let {x, y, width, height} = position;
+        let sections = this.state.data;
+        // if (!this.state.isMoving) {
         //
-
-        // let pan = this.positions.splice(this.state.currentPanIndex,1);
-
-        // let insert = this.positions.splice(this.state.currentPanIndex+1,1,pan);
-
-        // for (let i = 0; i<this.positions.length ; i++) {
-        //   let nextPositon = this.positions[i];
-        //   let {nx, ny, nwidth, nheight} = nextPositon;
-        //   if (x0 + dx >= nx ) {
-        //
+        //   for (let i = 0; i < this.state.data.length; i++) {
+        //     if (this.isInSquare(gestureState, this.positions[i])) {
+        //       this.setState({isMoving: true})
+        //       let pan = this.state.data[this.state.currentPanIndex];
+        //       let sections = this.state.data;
+        //       sections.splice(this.state.currentPanIndex, 1);
+        //       sections.splice(i, 0, pan);
+        //       this.forceUpdate();
+        //     }
         //   }
-        //
         // }
-
-        // if (x0 + dx >= (this.state.gX - this.state.gW / 2 ) && !this.state.isChangePosition) {
-        //   this.setState({isChangePosition: true});
-        //   Animated.timing(this.state.translateX1, {
-        //     toValue: this.state.rX - this.state.gX,
-        //     duration: 50
-        //   }).start(this.setState({gX: 72.5}));
-        // } else if (x0 + dx <= (this.state.gX + this.state.gW / 2 ) && this.state.isChangePosition) {
-        //   this.setState({isChangePosition: false});
-        //   Animated.timing(this.state.translateX1, {
-        //     toValue: this.state.rX - this.state.gX,
-        //     duration: 50
-        //   }).start(this.setState({gX: 202.5}));
-        // }
-
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         this.state.pan.flattenOffset();
         this.state.pan.setValue({x: 0, y: 0});
+
         for (let i = 0; i < this.state.data.length; i++) {
+
           if (this.isInSquare(gestureState, this.positions[i])) {
 
             let pan = this.state.data[this.state.currentPanIndex];
             let sections = this.state.data;
+
             sections.splice(this.state.currentPanIndex, 1);
             sections.splice(i, 0, pan);
+
             this.forceUpdate();
+            this.positionHasBeenChanged();
           }
         }
 
@@ -122,10 +102,11 @@ export default class Demo extends Component {
     });
   }
 
-  componentWillUpdate() {
-    if (this.props.animated) {
-      LayoutAnimation.configureNext(this.animations);
-    }
+  positionHasBeenChanged() {
+    this.props.positionHasBeenChanged && this.props.positionHasBeenChanged({
+      position: this.positions[this.state.currentPanIndex],
+      index: this.state.currentPanIndex
+    }, {position: this.positions[i], index: i})
   }
 
   isInSquare(gestureState, position) {
@@ -158,8 +139,7 @@ export default class Demo extends Component {
 
     let content = this.state.data.map((obj, i) => {
 
-      console.log(this.state.currentPanIndex);
-      let animatedStyle = i == this.state.currentPanIndex ? {transform: [{translateX},{translateY}]} : {};
+      let animatedStyle = i == this.state.currentPanIndex ? {transform: [{translateX}, {translateY}]} : {};
 
       return (
         <Animated.View
@@ -167,8 +147,10 @@ export default class Demo extends Component {
           ref={"pan" + i}
           {...this._panResponder.panHandlers}
           onLayout={(event) => this.handleLayout(event,i)}
-          style={{...animatedStyle,marginLeft:20,marginTop:20,width:100,height:100,backgroundColor:obj.color}}
-        />
+          style={{...animatedStyle}}
+        >
+          {this.props.renderContent && this.props.renderContent(obj, i)}
+        </Animated.View>
       )
     });
 
@@ -178,9 +160,22 @@ export default class Demo extends Component {
         style={{flex:1,width:300,flexWrap:'wrap',justifyContent:'center',alignItems:'center',flexDirection:'row'}}
       >
         {content}
-
+        <Text onPress={this.onPress.bind(this)}>点击</Text>
       </View>
     )
   }
 
+  onPress() {
+    let sections = this.state.data;
+    let pan = sections.splice(0, 1);
+    this.forceUpdate();
+  }
+
 }
+
+
+PortableView.PropTypes = {
+  renderContent: React.PropTypes.func,
+  positionHasBeenChanged: React.PropTypes.func,
+};
+PortableView.defaultProps = {};
