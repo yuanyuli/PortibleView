@@ -1,20 +1,29 @@
 import React, {Component} from 'react';
-import {View, Text, PanResponder, Animated} from 'react-native';
+import {View, Text, PanResponder, Animated,LayoutAnimation} from 'react-native';
 
-let SECTIONS = [{color:'red'}, {color:'green'}];
+let SECTIONS = [{color: 'red'}, {color: 'green'}, {color: 'blue'}, {color: 'black'}, {color: 'yellow'}];
 
 export default class Demo extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      data: SECTIONS,
       pan: new Animated.ValueXY({x: 0, y: 0}),
       translateX1: new Animated.Value(0),
       isChangePosition: false,
       currentPanIndex: 0
     },
-      this.positions = []
-
+      this.positions = [],
+      this.animations = {
+        duration: 200,
+        create: {
+          type: LayoutAnimation.Types.linear,
+        },
+        update: {
+          type: LayoutAnimation.Types.easeInEaseOut,
+        }
+      }
   }
 
   componentWillMount() {
@@ -57,6 +66,23 @@ export default class Demo extends Component {
         // console.log('dx' + '=' + dx);
         // console.log('dy' + '=' + dy);
 
+        // let position = this.positions[this.state.currentPanIndex];
+        // let {x, y, width, height} = position;
+        //
+
+        // let pan = this.positions.splice(this.state.currentPanIndex,1);
+
+        // let insert = this.positions.splice(this.state.currentPanIndex+1,1,pan);
+
+        // for (let i = 0; i<this.positions.length ; i++) {
+        //   let nextPositon = this.positions[i];
+        //   let {nx, ny, nwidth, nheight} = nextPositon;
+        //   if (x0 + dx >= nx ) {
+        //
+        //   }
+        //
+        // }
+
         // if (x0 + dx >= (this.state.gX - this.state.gW / 2 ) && !this.state.isChangePosition) {
         //   this.setState({isChangePosition: true});
         //   Animated.timing(this.state.translateX1, {
@@ -75,6 +101,17 @@ export default class Demo extends Component {
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         this.state.pan.flattenOffset();
+        this.state.pan.setValue({x: 0, y: 0});
+        for (let i = 0; i < this.state.data.length; i++) {
+          if (this.isInSquare(gestureState, this.positions[i])) {
+
+            let pan = this.state.data[this.state.currentPanIndex];
+            let sections = this.state.data;
+            sections.splice(this.state.currentPanIndex, 1);
+            sections.splice(i, 0, pan);
+            this.forceUpdate();
+          }
+        }
 
       },
       onPanResponderTerminate: (evt, gestureState) => {
@@ -85,23 +122,44 @@ export default class Demo extends Component {
     });
   }
 
+  componentWillUpdate() {
+    if (this.props.animated) {
+      LayoutAnimation.configureNext(this.animations);
+    }
+  }
+
+  isInSquare(gestureState, position) {
+    let {x0, y0, dx, dy} = gestureState;
+    let {x, y, width, height} = position;
+
+    let endX = x0 + dx;
+    let endY = y0 + dy;
+
+    if ((endX >= x && endX <= x + width) && (endY >= y && endY <= y + height)) {
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
   handleLayout(event, index) {
     let {nativeEvent: {layout: {x, y, width, height}}} = event;
     let positon = {x: x, y: y, width: width, height: height};
     this.positions[index] = positon;
   }
-  
+
   render() {
 
-    let {pan, translateX1} = this.state;
+    let {pan} = this.state;
 
     let [translateX,translateY] = [pan.x, pan.y];
 
 
-    let content = SECTIONS.map((obj,i) => {
+    let content = this.state.data.map((obj, i) => {
 
       console.log(this.state.currentPanIndex);
-      let animatedStyle = i == this.state.currentPanIndex ? {transform: [{translateX}]} : {};
+      let animatedStyle = i == this.state.currentPanIndex ? {transform: [{translateX},{translateY}]} : {};
 
       return (
         <Animated.View
@@ -109,7 +167,7 @@ export default class Demo extends Component {
           ref={"pan" + i}
           {...this._panResponder.panHandlers}
           onLayout={(event) => this.handleLayout(event,i)}
-          style={{...animatedStyle,width:100,height:100,backgroundColor:obj.color}}
+          style={{...animatedStyle,marginLeft:20,marginTop:20,width:100,height:100,backgroundColor:obj.color}}
         />
       )
     });
@@ -117,10 +175,12 @@ export default class Demo extends Component {
     return (
 
       <View
-        style={{flex:1,justifyContent:'center',alignItems:'center',flexDirection:'row'}}
+        style={{flex:1,width:300,flexWrap:'wrap',justifyContent:'center',alignItems:'center',flexDirection:'row'}}
       >
         {content}
+
       </View>
     )
   }
+
 }
