@@ -1,77 +1,26 @@
 {
-  "_args": [
-    [
-      "react-native-portable-view",
-      "/Users/zhangtian/Desktop/SelfUI/PortibleView/Demo"
-    ]
-  ],
-  "_from": "react-native-portable-view@*",
-  "_id": "react-native-portable-view@0.0.1",
-  "_inCache": true,
-  "_location": "/react-native-portable-view",
-  "_nodeVersion": "4.1.2",
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/react-native-portable-view-0.0.1.tgz_1468224051153_0.772222065133974"
-  },
-  "_npmUser": {
-    "email": "zt_halcyon@yeah.net",
-    "name": "zt_halcyon"
-  },
-  "_npmVersion": "3.3.7",
-  "_phantomChildren": {},
-  "_requested": {
-    "name": "react-native-portable-view",
-    "raw": "react-native-portable-view",
-    "rawSpec": "",
-    "scope": null,
-    "spec": "*",
-    "type": "range"
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_shasum": "8aac5c57feec3c3f57794d8a6160ef8bda78eeec",
-  "_shrinkwrap": null,
-  "_spec": "react-native-portable-view",
-  "_where": "/Users/zhangtian/Desktop/SelfUI/PortibleView/Demo",
-  "author": {
-    "name": "Zhang Tian"
-  },
-  "bugs": {
-    "url": "https://github.com/yuanyuli/PortibleView/issues"
-  },
-  "dependencies": {},
-  "description": "this is a Component that can change the order of children component in itself.",
-  "devDependencies": {},
-  "directories": {},
-  "dist": {
-    "shasum": "8aac5c57feec3c3f57794d8a6160ef8bda78eeec",
-    "tarball": "https://registry.npmjs.org/react-native-portable-view/-/react-native-portable-view-0.0.1.tgz"
-  },
-  "homepage": "https://github.com/yuanyuli/PortibleView.git#readme",
-  "installable": true,
-  "keywords": [
-    "component",
-    "portibleView",
-    "react-native"
-  ],
-  "license": "MIT",
-  "main": "library/PortableView.js",
-  "maintainers": [
-    {
-      "name": "zt_halcyon",
-      "email": "zt_halcyon@yeah.net"
-    }
-  ],
   "name": "react-native-portable-view",
-  "optionalDependencies": {},
+  "version": "0.0.3",
+  "main": "library/PortableView.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yuanyuli/PortibleView.git"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+   "bugs": {
+    "url": "https://github.com/yuanyuli/PortibleView/issues"
   },
-  "version": "0.0.1"
+   "homepage": "https://github.com/yuanyuli/PortibleView.git#readme",
+  "author": "Zhang Tian",
+  "license": "MIT",
+  "keywords": [
+    "react-native",
+    "portibleView",
+    "component"
+  ],
+  "dependencies": {
+  },
+  "description": {}
 }
