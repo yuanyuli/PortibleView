@@ -15,12 +15,12 @@ this is a Component that can change the order of children component in itself.
 
 ### Usage
 ```javascript	
-import Button from 'react-native-animated-button';
+import PortableView from 'react-native-portable-view';
 	
 class Demo extends Component {
 	render() {
     	return (
-        <Button/>
+        <PortableView/>
     	)	
       }
  }
@@ -28,44 +28,17 @@ class Demo extends Component {
 ```
 ### Examples
 ```
-<Button
-            style={{marginTop:10,alignSelf:'center', height: 55,width:80, backgroundColor: 'white', borderWidth: 1 / PixelRatio.get(), borderColor: '#0033FF', borderRadius: 5}}
-            imageStyle={{height:50,width:50}}
-            activeStyle={{marginTop:10,alignSelf:'center',height: 55,width:100, backgroundColor: 'white', borderWidth: 1 / PixelRatio.get(), borderColor: '#0033FF', borderRadius: 5}}
-            source={require('./jpg/head.jpg')}
-            text="左⬅️️"
-            animated={true}
-            type="iconLeft"
-            onLongPress={() => {
-          console.log('onLongPress...');
-        }}
-            onPress={() => {
-          console.log('onPress...');
-        }}
-            onPressIn={() => {
-          console.log('onPressIn...');
-        }}
-            onPressOut={() => {
-          console.log('onPressOut...');
-        }}
-          >
+<PortableView
+          style={{flex:1,width:375,flexWrap:'wrap',alignItems:'center',flexDirection:'row',backgroundColor:'#dbdbdb',height:500,marginTop:20}}
+          data={SECTIONS}
+          renderContent={this.renderContent.bind(this)}
+          positionHasBeenChanged={(position1,position2) => {}}
+          setPanResponderHandler={(obj,position,index) => {}}
+        />
 ```
 ## Props
-- `animated` (Boolean) `false` - animated or not for Button
-- `animations` (Object) animations for the style of Button from unactive to active 
-- `onPressIn`(Function) callback when pressin
-- `onPressOut`(Function) callback when pressout
-- `type` (Oneof:(['iconLeft', 'iconRight', 'iconTop', 'iconBottom'])) `iconBottom` - the relative position for Image and Text
-- `style` (Style)  - style of the Button which is unactive 
-- `activeStyle` (Style)  - style of the Text which is active 
-- `text` (String)  - text in Button
-- `activeText` (String)  - text when Button is active
-- `fontStyle` (Style)  - style of the Text which is unactive 
-- `activeFontStyle` (Style)  - style of the Text which is active 
-- `source` (Source) - source of Image which is unactive 
-- `activeSource` (Source) - source of Image which is active 
-- `imageStyle` (Style)  - style of the Image which is unactive 
-- `activeImageStyle` (Style)  - style of the Image which is unactive 
 
-
+- `renderContent`(Function) render the content view
+- `positionHasBeenChanged`(Function(oldPosition,newPosition)) callback when order change
+- `setPanResponderHandler`(Function(obj,position,index)) callback when content become the panresponderhandler
 
