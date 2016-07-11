@@ -8,7 +8,9 @@ export default class PortableView extends Component {
     this.state = {
       data: props.data,
       pan: new Animated.ValueXY({x: 0, y: 0}),
-      currentPanIndex: 0
+      currentPanIndex: 0,
+      offsetX: 0,
+      offsetY: 0
     };
     this.positions = []
   }
@@ -62,7 +64,7 @@ export default class PortableView extends Component {
     for (let i = 0; i < this.positions.length; i++) {
       let position = this.positions[i];
       let {x, y, width, height} = position;
-      if ((x0 >= x && x0 <= x + width) && (y0 >= y && y0 <= y + height)) {
+      if ((x0 >= x + this.state.offsetX && x0 <= x + width + this.state.offsetX) && (y0 >= y + this.state.offsetY && y0 <= y + height + this.state.offsetY)) {
         this.setState({currentPanIndex: i});
         let pan = this.refs["pan" + i];
         pan = this._panResponder.panHandlers;
@@ -87,7 +89,18 @@ export default class PortableView extends Component {
     }
   }
 
+  handleContainerLayout(event) {
+    let {nativeEvent: {layout: {x, y, width, height}}} = event;
+
+    this.setState({
+      offsetX: x,
+      offsetY: y
+    })
+
+  }
+
   handleLayout(event, index) {
+    this.props.onLayout && this.props.onLayout.bind(this);
     let {nativeEvent: {layout: {x, y, width, height}}} = event;
     let positon = {x: x, y: y, width: width, height: height};
     this.positions[index] = positon;
@@ -120,7 +133,8 @@ export default class PortableView extends Component {
     return (
 
       <View
-        {...this.props.style}
+        {...this.props}
+        onLayout={this.handleContainerLayout.bind(this)}
       >
         {content}
       </View>
@@ -146,14 +160,13 @@ export default class PortableView extends Component {
     let endX = x0 + dx;
     let endY = y0 + dy;
 
-    if ((endX >= x && endX <= x + width) && (endY >= y && endY <= y + height)) {
+    if ((endX >= x + this.state.offsetX && endX <= x + width + this.state.offsetX) && (endY >= y + this.state.offsetY && endY <= y + height + this.state.offsetY)) {
       return true;
     } else {
       return false;
     }
 
   }
-
 
 }
 

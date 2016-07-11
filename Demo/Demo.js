@@ -17,7 +17,7 @@ let blue =  Math.round(Math.random() * 255);
 
 let randomColor = ('rgb('+ red +','+green+','+blue +')').toString();
 
-import PortableView from './Test';
+import PortableView from 'react-native-portable-view';
 
 let SECTIONS = [{color: 'red'}, {color: 'green'}, {color: 'blue'}, {color: 'yellow'}, {color: randomColor}];
 
@@ -48,7 +48,7 @@ export default class Demo extends Component {
 
       <View>
         <PortableView
-          style={{flex:1,width:375,flexWrap:'wrap',alignItems:'center',flexDirection:'row',backgroundColor:'#dbdbdb',height:500,}}
+          style={{flex:1,width:375,flexWrap:'wrap',alignItems:'center',flexDirection:'row',backgroundColor:'#dbdbdb',height:500,marginTop:20}}
           data={SECTIONS}
           renderContent={this.renderContent.bind(this)}
           positionHasBeenChanged={(position1,position2) => {
@@ -58,10 +58,9 @@ export default class Demo extends Component {
           }}
           setPanResponderHandler={(obj,position,index) => {
           // console.log('正在成为响应者');
-          // console.log("obj" + JSON.stringify(obj));
-          // console.log("obj" + JSON.stringify(obj));
-          // console.log("position" + JSON.stringify(position));
-          // console.log("index" + index);
+          console.log("obj" + JSON.stringify(obj));
+          console.log("position" + JSON.stringify(position));
+          console.log("index" + index);
           }}
         />
         <View
